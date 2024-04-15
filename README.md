@@ -25,6 +25,8 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
   
   Ideas - 
     data visuals tab
+      one of normal dists of 1 variable
+      one tab for plotting 2 against each other with coloring by outcome?
     model tab where predictors can be selected
     
     
