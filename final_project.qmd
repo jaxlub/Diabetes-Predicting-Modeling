@@ -8,10 +8,19 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(shiny)
-data <- read.csv('https://storage.googleapis.com/kagglesdsdata/datasets/2527538/4289678/diabetes.csv?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gcp-kaggle-com%40kaggle-161607.iam.gserviceaccount.com%2F20240408%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240408T131236Z&X-Goog-Expires=259200&X-Goog-SignedHeaders=host&X-Goog-Signature=24e8e9e30bb3a90b64d3b6bf3e81b0e4784ccbe818c0e0baf1dd60f285c43782a6a5fbc6c1c7512fb9cd1a1df86b8ad872ef7939eae7f4f23cb4f4bd710e7ee8e0b6c836ca309e798f2ba6fb8b3feeec1d03d99cc620802518e57ba44acae0cef8e97f71bae8b2afe527b41c654d349dec571b0e21e5b729a6010a68eb3b3e0eabdf919d48abd649d1b2509eedc9dc6a2b281853e26a255f762872b369c70f53668f13f32fb885d04494b3550b2f3112618c82e5be6e558a490cf4cf3bca3b1d3f276500d55e36038926dbb996b4857848058d802e74214b230beb5ff0347aad21f604db16b7270c69305c30b887df5f24e791bb7ae836c9396ee88fbac0f2b2')
+data <- read.csv('/Users/jaxlub/Downloads/diabetes.csv')
 
 data_pos <- data |> filter(Outcome == 1) 
 data_neg <- data |> filter(Outcome == 0) 
+
+ggplot(data = data, aes(x = BMI, y = Age, color = Outcome)) +
+  geom_point()
+ggplot(data = data, aes(x = Glucose, y = Insulin, color = Outcome)) +
+  geom_point()
+ggplot(data = data, aes(x = DiabetesPedigreeFunction, y = Pregnancies, color = Outcome)) +
+  geom_point()
+ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) +
+  geom_point()
 ```
 
 
@@ -38,6 +47,16 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+
+    observeEvent(input$island,{
+    spec_choices <- penguins |> 
+      filter(island == input$island) |>
+      mutate(species = factor(species)) |> 
+      pull(species) |> 
+      levels()
+    updateSelectInput(inputId = "species", choices = spec_choices)
+  })
+  
   output$histogram_neg <- renderPlot({
     ggplot(data = data_neg, aes(x = .data[[input$xaxis]])) +
       geom_histogram(fill = "cornflowerblue", color = "black") + 
