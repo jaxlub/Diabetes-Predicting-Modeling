@@ -8,6 +8,7 @@ editor: visual
 ```{r}
 library(tidyverse)
 library(shiny)
+library(shinythemes)
 data <- read.csv('/Users/jaxlub/Downloads/diabetes.csv')
 
 data_pos <- data |> filter(Outcome == 1) 
@@ -24,39 +25,48 @@ ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) 
 ```
 
 
+# Modeling Code
+## Logestic modeling
+```{r}
+# Build model with DiabetesPedigreeFunction
+diabetes.lm <- glm(Outcome ~ ., data = data, family = binomial)
+summary(diabetes.lm)
+
+# Error rate 
+probabilities <- predict(diabetes.lm, type = "response")
+predictions <- ifelse(probabilities > 0.5, "1", "0")
+mean(predictions != data$Outcome)
+
+
+# Confusion matrix for the full model
+probabilities <- predict(diabetes.lm, type = "response")
+predictions <- ifelse(probabilities > 0.5, "1", "0")
+table(predictions, data$Outcome)
+```
+
+
 
 # Shiny App
 ```{r}
 columns = c("Pregnancies", "Glucose", "BloodPressure", "SkinThickness", "Insulin",  "BMI", "DiabetesPedigreeFunction", "Age")
 
-ui <- fluidPage(
-  tabsetPanel(
-    tabPanel("Data", fluid = TRUE,
-             sidebarLayout(
-               sidebarPanel(
-                 selectInput("xaxis", 
-                             label = "Select Predictor of Interest", 
-                             choices = columns)),
-               mainPanel(
-                 plotOutput("histogram_neg"),
-                 plotOutput("histogram_pos")
-               )
-             )
-    )
-  )
-)
+ui <- fluidPage(navbarPage("Diabetes",
+                           tabPanel("Histogram",
+                                    sidebarPanel(
+                                      selectInput("xaxis", 
+                                                  label = "Select Predictor of Interest", 
+                                                  choices = columns)),
+                           mainPanel(plotOutput("histogram_neg"),
+                                     plotOutput("histogram_pos")
+                )),
+                tabPanel("Models",
+                         sidebarPanel(selectInput("6axis", 
+                                                  label = "Select Predictor of Interest", 
+                                                  choices = columns)),
+                         mainPanel()
+                )))
 
 server <- function(input, output, session) {
-
-    observeEvent(input$island,{
-    spec_choices <- penguins |> 
-      filter(island == input$island) |>
-      mutate(species = factor(species)) |> 
-      pull(species) |> 
-      levels()
-    updateSelectInput(inputId = "species", choices = spec_choices)
-  })
-  
   output$histogram_neg <- renderPlot({
     ggplot(data = data_neg, aes(x = .data[[input$xaxis]])) +
       geom_histogram(fill = "cornflowerblue", color = "black") + 
@@ -73,4 +83,11 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+
+
+
+
+
+
+
 
