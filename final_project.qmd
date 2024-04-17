@@ -29,8 +29,8 @@ ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) 
 ## Logestic modeling
 ```{r}
 # Build model with DiabetesPedigreeFunction
-diabetes.lm <- glm(Outcome ~ ., data = data, family = binomial)
-summary(diabetes.lm)
+#diabetes.lm <- glm(Outcome ~ ., data = data, family = binomial)
+#summary(diabetes.lm)
 
 # Error rate 
 probabilities <- predict(diabetes.lm, type = "response")
@@ -85,8 +85,14 @@ mean(error)
 
 # Shiny App
 ```{r}
-columns = c("Pregnancies", "Glucose", "BloodPressure", "SkinThickness", "Insulin",  "BMI", "DiabetesPedigreeFunction", "Age")
-
+columns = c("Pregnancies", 
+            "Glucose", 
+            "BloodPressure", 
+            "SkinThickness", 
+            "Insulin",  
+            "BMI", 
+            "DiabetesPedigreeFunction", 
+            "Age")
 
 
 ui <- fluidPage(
@@ -100,33 +106,45 @@ ui <- fluidPage(
                         plotOutput("histogram_neg"),
                         plotOutput("histogram_pos")
                       )),
-             tabPanel("Models",
+             tabPanel("Logistic Model",
                       sidebarPanel(
-                        selectInput("6axis", 
-                                    label = "Select of Interest", 
-                                    choices = columns)),
+                        checkboxGroupInput("log_predictors", 
+                                           label = "Select Predictors of Interest", 
+                                           choices = columns,
+                                           selected = "Glucose")),
+                      mainPanel(
+                        verbatimTextOutput("log_summary"),
+                        #verbatimTextOutput("log_train_error"),
+                      )),
+             tabPanel("Naive Bayes Model",
+                      sidebarPanel(
+                        checkboxGroupInput("log_preditors", 
+                                           label = "Select Predictors of Interest", 
+                                           choices = columns,
+                                           selected = "Glucose")),
+                      mainPanel(
+                      )),
+             tabPanel("LDA Model",
+                      sidebarPanel(
+                        checkboxGroupInput("log_predicors", 
+                                           label = "Select Predictors of Interest", 
+                                           choices = columns,
+                                           selected = columns)),
+                      mainPanel(
+                      )),
+             tabPanel("QDA Model",
+                      sidebarPanel(
+                        checkboxGroupInput("log_predicors", 
+                                           label = "Select Predictors of Interest", 
+                                           choices = columns,
+                                           selected = columns)),
                       mainPanel(
                       ))
   )
 )
-# 
-# ui <- fluidPage(navbarPage("Diabetes",
-#                            tabPanel("Histogram",
-#                                     sidebarPanel(
-#                                       selectInput("xaxis", 
-#                                                   label = "Select Predictor of Interest", 
-#                                                   choices = columns)),
-#                                     mainPanel(plotOutput("histogram_neg"),
-#                                               plotOutput("histogram_pos")
-#                                     )),
-#                            tabPanel("Models",
-#                                     sidebarPanel(selectInput("6axis", 
-#                                                              label = "Select  of Interest", 
-#                                                              choices = columns)),
-#                                     mainPanel()
-#                            )))
 
 server <- function(input, output, session) {
+  # Histogram Tab
   output$histogram_neg <- renderPlot({
     ggplot(data = data_neg, aes(x = .data[[input$xaxis]])) +
       geom_histogram(fill = "cornflowerblue", color = "black") + 
@@ -139,12 +157,46 @@ server <- function(input, output, session) {
       labs(title = glue::glue(input$xaxis," Distribution in Diabetic Patients")) + 
       theme_minimal()
   })
+  
+  # Logistic Model Tab
+  log_model <- reactive({
+    browser()
+    input$log_predictors
+    text <- paste(input$log_predictors)
+    predictors <- paste("Outcome ~", paste(input$log_predictors, collapse=" + "))
+    diabetes.lm <- glm(as.formula(predictors), data = data, family = binomial)
+    diabetes.lm
+  })
+  
+  output$log_summary <- renderPrint({
+    summary(log_model())
+  })
+  
+  # output$log_train_error <- renderPrint({
+  #   probabilities <- predict(log_model(), type = "response")
+  #   predictions <- ifelse(probabilities > 0.5, "1", "0")
+  #   text <- print(paste0("Train Error Rate: ", round(mean(predictions != data$Outcome), digits = 5)))
+  # })
+
+  
+  
+  
 }
 
 shinyApp(ui, server)
 ```
 
 
+```{r}
+vec <- c("Age", "Glucose")
+text <- paste("Outcome ~", paste(vec, collapse=" + "))
+glm(as.formula(text), data = data, family = binomial)
+
+
+diabetes.lm <- glm(Outcome ~ Age + Glucose , data = data, family = binomial)
+summary(diabetes.lm)
+
+```
 
 
 
