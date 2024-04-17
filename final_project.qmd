@@ -43,28 +43,88 @@ probabilities <- predict(diabetes.lm, type = "response")
 predictions <- ifelse(probabilities > 0.5, "1", "0")
 table(predictions, data$Outcome)
 ```
+## Bayesion classifiers
+```{r}
+install.packages("e1071")
+library(e1071) # naiveBayes
+library(MASS) # lda, qda
+classify.nb <- naiveBayes(Outcome ~ ., data = data)
+classify.nb
 
+
+# Build an LDA classifier
+classify.lda <- lda(Outcome ~ ., data = data)
+classify.lda
+
+# Build a QDA classifier
+classify.qda <- qda(Outcome ~ ., data = data)
+classify.qda
+```
+
+# Compare models
+```{r}
+install.packages("splitTools")
+library(splitTools) # create_folds
+folds <- create_folds(data$Outcome, k = 10)
+
+
+# Naive Bayes error rate
+error <- rep(0, 5)
+i <- 1
+
+for (train in folds) {
+  model <- naiveBayes(species ~ ., data = Iris[train,])
+  predictions <- predict(model, newdata = Iris[-train,])
+  error[i] <- mean(predictions != Iris[-train,]$species)
+  i <- i + 1
+}
+
+mean(error)
+```
 
 
 # Shiny App
 ```{r}
 columns = c("Pregnancies", "Glucose", "BloodPressure", "SkinThickness", "Insulin",  "BMI", "DiabetesPedigreeFunction", "Age")
 
-ui <- fluidPage(navbarPage("Diabetes",
-                           tabPanel("Histogram",
-                                    sidebarPanel(
-                                      selectInput("xaxis", 
-                                                  label = "Select Predictor of Interest", 
-                                                  choices = columns)),
-                           mainPanel(plotOutput("histogram_neg"),
-                                     plotOutput("histogram_pos")
-                )),
-                tabPanel("Models",
-                         sidebarPanel(selectInput("6axis", 
-                                                  label = "Select Predictor of Interest", 
-                                                  choices = columns)),
-                         mainPanel()
-                )))
+
+
+ui <- fluidPage(
+  navbarPage("Diabetes",
+             tabPanel("Histogram",
+                      sidebarPanel(
+                        selectInput("xaxis", 
+                                    label = "Select Predictor of Interest", 
+                                    choices = columns)),
+                      mainPanel(
+                        plotOutput("histogram_neg"),
+                        plotOutput("histogram_pos")
+                      )),
+             tabPanel("Models",
+                      sidebarPanel(
+                        selectInput("6axis", 
+                                    label = "Select of Interest", 
+                                    choices = columns)),
+                      mainPanel(
+                      ))
+  )
+)
+# 
+# ui <- fluidPage(navbarPage("Diabetes",
+#                            tabPanel("Histogram",
+#                                     sidebarPanel(
+#                                       selectInput("xaxis", 
+#                                                   label = "Select Predictor of Interest", 
+#                                                   choices = columns)),
+#                                     mainPanel(plotOutput("histogram_neg"),
+#                                               plotOutput("histogram_pos")
+#                                     )),
+#                            tabPanel("Models",
+#                                     sidebarPanel(selectInput("6axis", 
+#                                                              label = "Select  of Interest", 
+#                                                              choices = columns)),
+#                                     mainPanel()
+#                            )))
 
 server <- function(input, output, session) {
   output$histogram_neg <- renderPlot({
