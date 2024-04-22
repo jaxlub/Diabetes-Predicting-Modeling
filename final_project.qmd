@@ -83,6 +83,39 @@ mean(error)
 ```
 
 
+# Un-adapted model visual code
+Tab could be called Parttree Model
+Idea: new tab and user can select two predictors for graph
+
+Is there way to get model stats?
+```{r}
+library(tidymodels)
+remotes::install_github("grantmcdermott/parttree")
+library(parttree)
+set.seed(123) ## For consistent jitter
+
+data$diagnosis = as.factor(data$diagnosis)
+
+## Build our tree using parsnip (but with rpart as the model engine)
+tree =
+  decision_tree() |>
+  set_engine("rpart") |>
+  set_mode("classification") |>
+  fit(diagnosis ~ texture + points, data = data)
+
+
+## Plot the data and model partitions
+data |>
+  ggplot(aes(x = texture, y = points)) +
+  geom_jitter(aes(colour = diagnosis), alpha = 0.7) +
+  geom_parttree(data = tree, aes(fill = diagnosis), alpha = 0.1) +
+  labs(x = "Texture",
+       y = "Point Score",
+       title = "Classification Areas of Tumors",
+       subtitle = "Malignent and Benign Training Cases shown as Points")
+```
+
+
 # Shiny App
 ```{r}
 columns = c("Pregnancies", 
@@ -187,16 +220,7 @@ shinyApp(ui, server)
 ```
 
 
-```{r}
-vec <- c("Age", "Glucose")
-text <- paste("Outcome ~", paste(vec, collapse=" + "))
-glm(as.formula(text), data = data, family = binomial)
 
-
-diabetes.lm <- glm(Outcome ~ Age + Glucose , data = data, family = binomial)
-summary(diabetes.lm)
-
-```
 
 
 
