@@ -29,4 +29,6 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
       one tab for plotting 2 against each other with coloring by outcome?
     model tab where predictors can be selected
     
+  Maybe need more visuals...
+    
     

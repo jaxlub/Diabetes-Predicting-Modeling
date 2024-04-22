@@ -26,46 +26,41 @@ ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) 
 
 
 # Modeling Code
-## Logestic modeling
-```{r}
-# Build model with DiabetesPedigreeFunction
-#diabetes.lm <- glm(Outcome ~ ., data = data, family = binomial)
-#summary(diabetes.lm)
-
-# Error rate 
-probabilities <- predict(diabetes.lm, type = "response")
-predictions <- ifelse(probabilities > 0.5, "1", "0")
-mean(predictions != data$Outcome)
-
-
-# Confusion matrix for the full model
-probabilities <- predict(diabetes.lm, type = "response")
-predictions <- ifelse(probabilities > 0.5, "1", "0")
-table(predictions, data$Outcome)
-```
 ## Bayesion classifiers
 ```{r}
 install.packages("e1071")
 library(e1071) # naiveBayes
 library(MASS) # lda, qda
-classify.nb <- naiveBayes(Outcome ~ ., data = data)
-classify.nb
+install.packages("splitTools")
+library(splitTools) # create_folds
 
+folds <- create_folds(data$Outcome, k = 5)
 
 # Build an LDA classifier
 classify.lda <- lda(Outcome ~ ., data = data)
 classify.lda
 
-# Build a QDA classifier
-classify.qda <- qda(Outcome ~ ., data = data)
-classify.qda
+# LDA error rate
+error <- rep(0, 5)
+i <- 1
+
+for (train in folds) {
+  model <- lda(species ~ ., data = Iris[train,])
+  predictions <- predict(model, newdata = Iris[-train,])$class
+  error[i] <- mean(predictions != Iris[-train,]$species)
+  i <- i + 1
+}
+
+mean(error)
+
+
 ```
 
 # Compare models
 ```{r}
 install.packages("splitTools")
 library(splitTools) # create_folds
-folds <- create_folds(data$Outcome, k = 10)
+folds <- create_folds(data$Outcome, k = 5)
 
 
 # Naive Bayes error rate
@@ -144,22 +139,24 @@ ui <- fluidPage(
                         checkboxGroupInput("log_predictors", 
                                            label = "Select Predictors of Interest", 
                                            choices = columns,
-                                           selected = "Glucose")),
+                                           selected = columns)),
                       mainPanel(
-                        verbatimTextOutput("log_summary"),
-                        #verbatimTextOutput("log_train_error"),
+                        verbatimTextOutput("log_test_error"),
+                        verbatimTextOutput("log_summary")
                       )),
              tabPanel("Naive Bayes Model",
                       sidebarPanel(
-                        checkboxGroupInput("log_preditors", 
+                        checkboxGroupInput("NB_predictors", 
                                            label = "Select Predictors of Interest", 
                                            choices = columns,
-                                           selected = "Glucose")),
+                                           selected = columns)),
                       mainPanel(
+                        verbatimTextOutput("NB_test_error"),
+                        verbatimTextOutput("NB_summary")
                       )),
              tabPanel("LDA Model",
                       sidebarPanel(
-                        checkboxGroupInput("log_predicors", 
+                        checkboxGroupInput("LDA_predictors", 
                                            label = "Select Predictors of Interest", 
                                            choices = columns,
                                            selected = columns)),
@@ -167,11 +164,23 @@ ui <- fluidPage(
                       )),
              tabPanel("QDA Model",
                       sidebarPanel(
-                        checkboxGroupInput("log_predicors", 
+                        checkboxGroupInput("QDA_predictors", 
                                            label = "Select Predictors of Interest", 
                                            choices = columns,
                                            selected = columns)),
                       mainPanel(
+                        verbatimTextOutput("QDA_test_error"),
+                        verbatimTextOutput("QDA_summary")
+                      )),
+             tabPanel("Parttree Model",
+                      sidebarPanel(
+                        checkboxGroupInput("PT_predictors", 
+                                           label = "Select Predictors of Interest", 
+                                           choices = columns,
+                                           selected = columns)),
+                      mainPanel(
+                        #verbatimTextOutput("PT_test_error"),
+                        #verbatimTextOutput("PT_summary")
                       ))
   )
 )
@@ -193,8 +202,6 @@ server <- function(input, output, session) {
   
   # Logistic Model Tab
   log_model <- reactive({
-    browser()
-    input$log_predictors
     text <- paste(input$log_predictors)
     predictors <- paste("Outcome ~", paste(input$log_predictors, collapse=" + "))
     diabetes.lm <- glm(as.formula(predictors), data = data, family = binomial)
@@ -205,15 +212,85 @@ server <- function(input, output, session) {
     summary(log_model())
   })
   
-  # output$log_train_error <- renderPrint({
-  #   probabilities <- predict(log_model(), type = "response")
-  #   predictions <- ifelse(probabilities > 0.5, "1", "0")
-  #   text <- print(paste0("Train Error Rate: ", round(mean(predictions != data$Outcome), digits = 5)))
-  # })
+  output$log_test_error <- renderPrint({
+    text <- paste(input$log_predictors)
+    predictors <- paste("Outcome ~", paste(input$log_predictors, collapse=" + "))
+    folds <- create_folds(data$Outcome, k = 5)
+    
+    error <- rep(0, 5)
+    i <- 1
+    for (train in folds) {
+      model <- glm(as.formula(predictors), data = data[train,], family = binomial)
+      probabilities <- predict(model, newdata = data[-train,], type = "response")
+      predictions <- ifelse(probabilities > 0.5, "1", "0")
+      error[i] <- mean(predictions != data[-train,]$Outcome)
+      i <- i + 1
+    }
+    
+    text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
+  })
+  
+  # Naive Bayes Model Tab
+  NB_model <- reactive({
+    text <- paste(input$NB_predictors)
+    predictors <- paste("Outcome ~", paste(input$NB_predictors, collapse=" + "))
+    diabetes.nb <- naiveBayes(as.formula(predictors), data = data)
+    diabetes.nb
+  })
 
+  output$NB_summary <- renderPrint({
+    NB_model()
+  })
   
+  output$NB_test_error <- renderPrint({
+    text <- paste(input$NB_predictors)
+    predictors <- paste("Outcome ~", paste(input$NB_predictors, collapse=" + "))
+    folds <- create_folds(data$Outcome, k = 5)
+    
+    error <- rep(0, 5)
+    i <- 1
+    for (train in folds) {
+      model <- naiveBayes(as.formula(predictors), data = data[train,])
+      predictions <- predict(model, newdata = data[-train,])
+      error[i] <- mean(predictions != data[-train,]$Outcome)
+      i <- i + 1
+    }
+    
+    text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
+  })
   
+  # LDA Model Tab
+   
   
+  # QDA Model Tab
+  QDA_model <- reactive({
+    text <- paste(input$QDA_predictors)
+    predictors <- paste("Outcome ~", paste(input$QDA_predictors, collapse=" + "))
+    diabetes.qda <- qda(as.formula(predictors), data = data)
+    diabetes.qda
+  })
+  
+  output$QDA_summary <- renderPrint({
+    QDA_model()
+  })
+  
+  output$QDA_test_error <- renderPrint({
+     text <- paste(input$QDA_predictors)
+     predictors <- paste("Outcome ~", paste(input$QDA_predictors, collapse=" + "))
+     folds <- create_folds(data$Outcome, k = 5)
+     
+     error <- rep(0, 5)
+     i <- 1
+     for (train in folds) {
+       model <- qda(as.formula(predictors), data = data[train,])
+       predictions <- predict(model, newdata = data[-train,])$class
+       error[i] <- mean(predictions != data[-train,]$Outcome)
+       i <- i + 1
+     }
+
+     text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
+  })
+
 }
 
 shinyApp(ui, server)
