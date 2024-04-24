@@ -29,6 +29,10 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
       one tab for plotting 2 against each other with coloring by outcome?
     model tab where predictors can be selected
     
+    Scatterplot matrix
+    Look at missing 0 is hist -skinthickness
+
+    
   Maybe need more visuals...
     
     

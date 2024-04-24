@@ -26,7 +26,7 @@ ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) 
 
 
 # Modeling Code
-## Bayesion classifiers
+## Bayesion Classifiers
 ```{r}
 install.packages("e1071")
 library(e1071) # naiveBayes
@@ -113,6 +113,8 @@ data |>
 ```
 
 
+
+
 # Shiny App
 ```{r}
 columns = c("Pregnancies", 
@@ -181,10 +183,11 @@ ui <- fluidPage(
                         checkboxGroupInput("PT_predictors", 
                                            label = "Select Predictors of Interest", 
                                            choices = columns,
-                                           selected = columns)),
+                                           selected = head(columns,2))),
+                        actionButton("PT_graph",
+                                     label = "Graph"),
                       mainPanel(
-                        #verbatimTextOutput("PT_test_error"),
-                        #verbatimTextOutput("PT_summary")
+                        plotOutput("PT_hist"),
                       ))
   )
 )
@@ -321,6 +324,47 @@ server <- function(input, output, session) {
      text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
   })
 
+  # Parttree Model Tab
+  graph <- eventReactive(input$PT_graph, {
+    #if(length(input$PT_predictors) != 2){
+    #  updateCheckboxGroupInput(session, "PT_predictors", selected= tail(input$PT_predictors,2))
+    #}
+    
+
+    data$Outcome = as.factor(data$Outcome)
+    
+    text <- paste(input$PT_predictors)
+    predictors <- paste("Outcome ~", paste(input$PT_predictors, collapse=" + "))
+    
+    tree =
+      decision_tree() |>
+      set_engine("rpart") |>
+      set_mode("classification") |>
+      fit(as.formula(predictors), data = data)
+    
+    graph <- data |>
+      ggplot(aes(x = .data[[input$PT_predictors[1]]], y = .data[[input$PT_predictors[2]]])) +
+      geom_jitter(aes(colour = Outcome), alpha = 0.7) +
+      geom_parttree(data = tree, aes(fill = Outcome), alpha = 0.1) +
+      labs(title = glue::glue("Classification Areas of Diabetes using ", input$PT_predictors[1]," and ", input$PT_predictors[2]),
+           subtitle = "Positive and Negative Training Cases shown as Points")
+    graph
+  })
+  
+  output$PT_hist <- renderPlot({
+    graph()
+  })
+  
+  test <- reactive({
+    observe({
+      if(length(input$PT_predictors) > 2){
+        updateCheckboxGroupInput(session, "PT_predictors", selected = head(input$PT_predictors,2))
+      }
+      if(length(input$SelecetedVars) < 1){
+        updateCheckboxGroupInput(session, "PT_predictors", selected = head(columns,1))
+      }
+    })
+  })
 }
 
 shinyApp(ui, server)
