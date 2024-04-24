@@ -40,6 +40,8 @@ folds <- create_folds(data$Outcome, k = 5)
 classify.lda <- lda(Outcome ~ ., data = data)
 classify.lda
 
+
+
 # LDA error rate
 error <- rep(0, 5)
 i <- 1
@@ -161,6 +163,8 @@ ui <- fluidPage(
                                            choices = columns,
                                            selected = columns)),
                       mainPanel(
+                        verbatimTextOutput("LDA_test_error"),
+                        verbatimTextOutput("LDA_summary")
                       )),
              tabPanel("QDA Model",
                       sidebarPanel(
@@ -260,7 +264,33 @@ server <- function(input, output, session) {
   })
   
   # LDA Model Tab
-   
+  LDA_model <- reactive({
+    text <- paste(input$LDA_predictors)
+    predictors <- paste("Outcome ~", paste(input$LDA_predictors, collapse=" + "))
+    diabetes.lda <- lda(as.formula(predictors), data = data)
+    diabetes.lda
+  })
+  
+  output$LDA_summary <- renderPrint({
+    LDA_model()
+  })
+  
+  output$LDA_test_error <- renderPrint({
+     text <- paste(input$LDA_predictors)
+     predictors <- paste("Outcome ~", paste(input$LDA_predictors, collapse=" + "))
+     folds <- create_folds(data$Outcome, k = 5)
+     
+     error <- rep(0, 5)
+     i <- 1
+     for (train in folds) {
+       model <- lda(as.formula(predictors), data = data[train,])
+       predictions <- predict(model, newdata = data[-train,])$class
+       error[i] <- mean(predictions != data[-train,]$Outcome)
+       i <- i + 1
+     }
+
+     text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
+  })   
   
   # QDA Model Tab
   QDA_model <- reactive({
