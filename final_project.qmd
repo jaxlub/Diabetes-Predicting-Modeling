@@ -11,17 +11,25 @@ library(shiny)
 library(shinythemes)
 data <- read.csv('/Users/jaxlub/Downloads/diabetes.csv')
 
+data <- data |> 
+  filter(Glucose != 0) |>
+  filter(BloodPressure != 0) |>
+  filter(SkinThickness != 0) |>
+  filter(Insulin != 0) |>
+  filter(BMI != 0)
+
+
 data_pos <- data |> filter(Outcome == 1) 
 data_neg <- data |> filter(Outcome == 0) 
 
-ggplot(data = data, aes(x = BMI, y = Age, color = Outcome)) +
-  geom_point()
-ggplot(data = data, aes(x = Glucose, y = Insulin, color = Outcome)) +
-  geom_point()
-ggplot(data = data, aes(x = DiabetesPedigreeFunction, y = Pregnancies, color = Outcome)) +
-  geom_point()
-ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) +
-  geom_point()
+# ggplot(data = data, aes(x = BMI, y = Age, color = Outcome)) +
+#   geom_point()
+# ggplot(data = data, aes(x = Glucose, y = Insulin, color = Outcome)) +
+#   geom_point()
+# ggplot(data = data, aes(x = DiabetesPedigreeFunction, y = Pregnancies, color = Outcome)) +
+#   geom_point()
+# ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) +
+#   geom_point()
 ```
 
 
@@ -34,49 +42,46 @@ library(MASS) # lda, qda
 install.packages("splitTools")
 library(splitTools) # create_folds
 
-folds <- create_folds(data$Outcome, k = 5)
-
-# Build an LDA classifier
-classify.lda <- lda(Outcome ~ ., data = data)
-classify.lda
-
-
-
-# LDA error rate
-error <- rep(0, 5)
-i <- 1
-
-for (train in folds) {
-  model <- lda(species ~ ., data = Iris[train,])
-  predictions <- predict(model, newdata = Iris[-train,])$class
-  error[i] <- mean(predictions != Iris[-train,]$species)
-  i <- i + 1
-}
-
-mean(error)
-
-
+# folds <- create_folds(data$Outcome, k = 5)
+# 
+# # Build an LDA classifier
+# classify.lda <- lda(Outcome ~ ., data = data)
+# classify.lda
+# 
+# 
+# 
+# # LDA error rate
+# error <- rep(0, 5)
+# i <- 1
+# 
+# for (train in folds) {
+#   model <- lda(species ~ ., data = Iris[train,])
+#   predictions <- predict(model, newdata = Iris[-train,])$class
+#   error[i] <- mean(predictions != Iris[-train,]$species)
+#   i <- i + 1
+# }
+# 
+# mean(error)
 ```
 
 # Compare models
 ```{r}
 install.packages("splitTools")
 library(splitTools) # create_folds
-folds <- create_folds(data$Outcome, k = 5)
 
-
-# Naive Bayes error rate
-error <- rep(0, 5)
-i <- 1
-
-for (train in folds) {
-  model <- naiveBayes(species ~ ., data = Iris[train,])
-  predictions <- predict(model, newdata = Iris[-train,])
-  error[i] <- mean(predictions != Iris[-train,]$species)
-  i <- i + 1
-}
-
-mean(error)
+# folds <- create_folds(data$Outcome, k = 5)
+# # Naive Bayes error rate
+# error <- rep(0, 5)
+# i <- 1
+# 
+# for (train in folds) {
+#   model <- naiveBayes(species ~ ., data = Iris[train,])
+#   predictions <- predict(model, newdata = Iris[-train,])
+#   error[i] <- mean(predictions != Iris[-train,]$species)
+#   i <- i + 1
+# }
+# 
+# mean(error)
 ```
 
 
@@ -90,26 +95,26 @@ library(tidymodels)
 remotes::install_github("grantmcdermott/parttree")
 library(parttree)
 set.seed(123) ## For consistent jitter
-
-data$diagnosis = as.factor(data$diagnosis)
-
-## Build our tree using parsnip (but with rpart as the model engine)
-tree =
-  decision_tree() |>
-  set_engine("rpart") |>
-  set_mode("classification") |>
-  fit(diagnosis ~ texture + points, data = data)
-
-
-## Plot the data and model partitions
-data |>
-  ggplot(aes(x = texture, y = points)) +
-  geom_jitter(aes(colour = diagnosis), alpha = 0.7) +
-  geom_parttree(data = tree, aes(fill = diagnosis), alpha = 0.1) +
-  labs(x = "Texture",
-       y = "Point Score",
-       title = "Classification Areas of Tumors",
-       subtitle = "Malignent and Benign Training Cases shown as Points")
+# 
+# data$Outcome = as.factor(data$Outcome)
+# 
+# ## Build our tree using parsnip (but with rpart as the model engine)
+# tree =
+#   decision_tree() |>
+#   set_engine("rpart") |>
+#   set_mode("classification") |>
+#   fit(Outcome ~ BMI + Age, data = data)
+# 
+# 
+# ## Plot the data and model partitions
+# data |>
+#   ggplot(aes(x = BMI, y = Age)) +
+#   geom_jitter(aes(colour = Outcome), alpha = 0.7) +
+#   geom_parttree(data = tree, aes(fill = Outcome), alpha = 0.1) +
+#   labs(x = "Texture",
+#        y = "Point Score",
+#        title = "Classification Areas of Tumors",
+#        subtitle = "Malignent and Benign Training Cases shown as Points")
 ```
 
 
