@@ -5,6 +5,8 @@ format: html
 editor: visual
 ---
 
+
+
 ```{r}
 library(tidyverse)
 library(shiny)
@@ -66,7 +68,6 @@ library(splitTools) # create_folds
 
 # Compare models
 ```{r}
-install.packages("splitTools")
 library(splitTools) # create_folds
 
 # folds <- create_folds(data$Outcome, k = 5)
@@ -116,8 +117,6 @@ set.seed(123) ## For consistent jitter
 #        title = "Classification Areas of Tumors",
 #        subtitle = "Malignent and Benign Training Cases shown as Points")
 ```
-
-
 
 
 # Shiny App

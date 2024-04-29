@@ -1,0 +1,32 @@
+---
+title: ""
+author: "Jax Lubkowitz"
+format: html
+editor: visual
+---
+
+# Introduction
+## Background & Relavance
+
+Questions of Interest - 
+- What techniques best model the relationship between various predictors and diabetes outcome?
+- What characteristics can be used to predict diabetes outcome?
+
+
+## Tidying 
+  The data set had a large amount of 0 values for things such as skin thickness. Upon further investigation it appeared that null values in the data set had been filled in with 0's. When modeling this could cause serious skews in our results. To prevent this I removed all 0 values in categories where they had been applied as null (ie 0 pregnancies makes sense but having 0 BMI is just a null value). The one problem with this tack is it limits the amount of data available. Initially the data set had 768 instances but after filtering all null Glucose, Blood Pressure, Skin Thickness, Insulin and BMI values the data set was left with 392 instances. 
+
+
+## Model backgrounds
+LOG - QDA - LDA - Naive Bayes - Tree
+# Data Exploration
+## Histograms
+Glucose and Insulin r instresting
+## Scatter plots 
+
+
+## Discuss Shiny App
+
+# Conclusion
+
+

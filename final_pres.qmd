@@ -1,0 +1,114 @@
+---
+title: "Creation of a Diabetic Modeling App"
+author: "Jax Lubkowitz"
+format: revealjs
+editor: visual
+---
+## Questions of Interest 1? 
+```{r}
+library(tidyverse)
+library(gridExtra)
+library(tidymodels)
+remotes::install_github("grantmcdermott/parttree")
+library(parttree)
+library(splitTools) # create_folds
+set.seed(123)
+data <- read.csv('/Users/jaxlub/Downloads/diabetes.csv')
+data <- data |> 
+  filter(Glucose != 0) |>
+  filter(BloodPressure != 0) |>
+  filter(SkinThickness != 0) |>
+  filter(Insulin != 0) |>
+  filter(BMI != 0)
+data_pos <- data |> filter(Outcome == 1) 
+data_neg <- data |> filter(Outcome == 0) 
+```
+- What characteristics can be used to predict diabetes outcome?
+  - Age
+  - Insulin
+  - BMI
+  - Blood Pressure
+  - Glucose
+  - Pregnancies
+  - Diabetes Pedigree Function 
+  
+## Questions of Interest 2? 
+- What techniques best model the relationship between various predictors and diabetes outcome?
+  - Logistic
+  - LDA
+  - Naive Bayes
+  - QDA
+  - Tree based model
+
+## Data Exploration: Insulin Distribution
+```{r}
+#| layout-ncol: 2
+ggplot(data = data_neg, aes(x = Insulin)) +
+  geom_histogram(fill = "cornflowerblue", color = "black") + 
+  labs(title = "Insulin Distribution in Non-Diabetic Patients") + 
+  theme_minimal(base_size = 20)
+ggplot(data = data_pos, aes(x = Insulin)) +
+  geom_histogram(fill = "firebrick1", color = "black") + 
+  labs(title = "Insulin Distribution in Diabetic Patients") + 
+  theme_minimal(base_size = 20)
+
+```
+
+
+## Data Exploration: Glucose Distribution
+```{r}
+#| layout-ncol: 2
+ggplot(data = data_neg, aes(x = Glucose)) +
+  geom_histogram(fill = "cornflowerblue", color = "black") + 
+  labs(title = "Glucose Distribution in Non-Diabetic Patients") + 
+  theme_minimal(base_size = 20)
+ggplot(data = data_pos, aes(x = Glucose)) +
+  geom_histogram(fill = "firebrick1", color = "black") + 
+  labs(title = "Glucose Distribution in Diabetic Patients") + 
+  theme_minimal(base_size = 20)
+```
+
+## Logistic Model
+```{r}
+    full.log <- glm(Outcome ~ ., data = data, family = binomial)
+    summary(full.log)
+
+    folds <- create_folds(data$Outcome, k = 5)
+    error <- rep(0, 5)
+    i <- 1
+    for (train in folds) {
+      model <- glm(Outcome ~ ., data = data[train,], family = binomial)
+      probabilities <- predict(model, newdata = data[-train,], type = "response")
+      predictions <- ifelse(probabilities > 0.5, "1", "0")
+      error[i] <- mean(predictions != data[-train,]$Outcome)
+      i <- i + 1
+    }
+    
+    text <- print(paste0("Train Error Rate: ", round(mean(error), digits = 5)))
+```
+
+
+## Parttree Model
+```{r}
+data$Outcome = as.factor(data$Outcome)
+
+## Build our tree using parsnip (but with rpart as the model engine)
+tree =
+  decision_tree() |>
+  set_engine("rpart") |>
+  set_mode("classification") |>
+  fit(Outcome ~ BMI + Age, data = data)
+
+
+## Plot the data and model partitions
+data |>
+  ggplot(aes(x = BMI, y = Age)) +
+  geom_jitter(aes(colour = Outcome), alpha = 0.7) +
+  geom_parttree(data = tree, aes(fill = Outcome), alpha = 0.1) +
+  labs(x = "BMI",
+       y = "Age",
+       title = "Classification Areas of Diabetes") +
+  theme_classic(base_size = 24)
+```
+
+

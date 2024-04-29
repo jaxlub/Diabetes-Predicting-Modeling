@@ -1,7 +1,6 @@
 # Final Project for Data Visualization 
 Welcome to my interactive shiny app on Diabetes!
 
-
 Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?resource=download
 
   - Pregnancies: To express the Number of pregnancies
@@ -25,11 +24,8 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
   
   Ideas - 
     data visuals tab
-      one of normal dists of 1 variable
-      one tab for plotting 2 against each other with coloring by outcome?
-    model tab where predictors can be selected
-    
-  Scatterplot matrix
+      one tab for plotting 2 against each other with coloring by outcome - Scatterplot matrix
+  
   
   
   Removed all non-0 data points except pregnancies - models got better - nulls were input as 0 so they should be removed before any visuals or data modeling
@@ -37,3 +33,8 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
   Maybe need more visuals...
     
     
+    
+## Contents
+- `final_report.qmd` - Brief Write up of Project
+- `final_project.qmd` - Shiny App
+- `final_pres.qmd` - Brief Class Presentation
