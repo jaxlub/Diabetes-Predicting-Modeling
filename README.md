@@ -33,6 +33,8 @@ Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?r
   Maybe need more visuals...
     
     
+TODO - BLOG POST!
+    
     
 ## Contents
 - `final_report.qmd` - Brief Write up of Project

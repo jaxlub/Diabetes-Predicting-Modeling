@@ -5,8 +5,6 @@ format: html
 editor: visual
 ---
 
-
-
 ```{r}
 library(tidyverse)
 library(shiny)
@@ -33,7 +31,6 @@ data_neg <- data |> filter(Outcome == 0)
 # ggplot(data = data, aes(x = SkinThickness, y = BloodPressure, color = Outcome)) +
 #   geom_point()
 ```
-
 
 # Modeling Code
 ## Bayesion Classifiers
@@ -204,6 +201,12 @@ server <- function(input, output, session) {
       labs(title = glue::glue(input$xaxis," Distribution in Non-Diabetic Patients")) + 
       theme_minimal()
   })
+  
+  
+  
+  
+  mutate(time = hour(time))
+  
   output$histogram_pos <- renderPlot({
     ggplot(data = data_pos, aes(x = .data[[input$xaxis]])) +
       geom_histogram(fill = "firebrick1", color = "black") + 
@@ -211,6 +214,8 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
+  
+  browser()
   # Logistic Model Tab
   log_model <- reactive({
     text <- paste(input$log_predictors)
@@ -373,12 +378,3 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-
-
-
-
-
-
-
-

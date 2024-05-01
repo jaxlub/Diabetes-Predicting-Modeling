@@ -51,7 +51,6 @@ ggplot(data = data_pos, aes(x = Insulin)) +
   geom_histogram(fill = "firebrick1", color = "black") + 
   labs(title = "Insulin Distribution in Diabetic Patients") + 
   theme_minimal(base_size = 20)
-
 ```
 
 
