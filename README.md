@@ -6,6 +6,8 @@ The [data](https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset
 
 ## Shiny app Functions
 
+The Shiny app includes a data exploration tab and 5 modeling tabs with test error accuracy. The five models included are a Logistical, Naive Bayes, QDA, LDA and parttree models. 
+
 - Data exploration: compare distributions of predictors between diabetic and non-diabetic groups to identify useful predictors.
 - Logistical Modeling Tab - Allows users to select predictors and calculates test error and model output.
 - Naive Bayes Model - Allows users to select predictors and calculates test error and model output.
@@ -13,11 +15,6 @@ The [data](https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset
 - LDA Model - Allows users to select predictors and calculates test error and model output.
 - Parttree Model - Allows users to select 2 predictors of interest and shows decision tree classification areas in comparison to actual data points.  
 
-The Shiny app includes a data exploration tab and 5 modeling tabs with test error accuracy. The five models included are a Logistical, Naive Bayes, QDA, LDA and parttree models. 
-
-
-
-  
 ## Contents
 - `final_report.qmd/final_report.html` - Project Report
 - `final_project.qmd` - Shiny App
