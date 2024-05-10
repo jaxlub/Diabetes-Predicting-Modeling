@@ -194,18 +194,13 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  # Histogram Tab
+# Histogram Tab
   output$histogram_neg <- renderPlot({
     ggplot(data = data_neg, aes(x = .data[[input$xaxis]])) +
       geom_histogram(fill = "cornflowerblue", color = "black") + 
       labs(title = glue::glue(input$xaxis," Distribution in Non-Diabetic Patients")) + 
       theme_minimal()
   })
-  
-  
-  
-  
-  mutate(time = hour(time))
   
   output$histogram_pos <- renderPlot({
     ggplot(data = data_pos, aes(x = .data[[input$xaxis]])) +
@@ -215,7 +210,6 @@ server <- function(input, output, session) {
   })
   
   
-  browser()
   # Logistic Model Tab
   log_model <- reactive({
     text <- paste(input$log_predictors)

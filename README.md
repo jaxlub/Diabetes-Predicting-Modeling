@@ -1,42 +1,25 @@
-# Final Project for Data Visualization 
-Welcome to my interactive shiny app on Diabetes!
+# Predicting Diabetes with Various Modeling Techniques
 
-Dataset: https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?resource=download
+This app was developed to allows users to explore the relationship between various health measuremnts (such as BMI, or age) and the occurrence of diabetes. Furthermore the app contains a data exploration tab to analyze distributions between the diabetic and non-diabetic groups to help identify useful predictors. 
 
-  - Pregnancies: To express the Number of pregnancies
+The [data](https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?resource=download) contains 768 patients with information on number of pregnancies, blood glucose levels, blood pressure, skin thickness, insulin levels, BMI, pedigree function, age and whether or not they developed diabetes. 
 
-  - Glucose: To express the Glucose level in blood
+## Shiny app Functions
 
-  - BloodPressure: To express the Blood pressure measurement
+- Data exploration: compare distributions of predictors between diabetic and non-diabetic groups to identify useful predictors.
+- Logistical Modeling Tab - Allows users to select predictors and calculates test error and model output.
+- Naive Bayes Model - Allows users to select predictors and calculates test error and model output.
+- QDA Model - Allows users to select predictors and calculates test error and model output.
+- LDA Model - Allows users to select predictors and calculates test error and model output.
+- Parttree Model - Allows users to select 2 predictors of interest and shows decision tree classification areas in comparison to actual data points.  
 
-  - SkinThickness: To express the thickness of the skin
+The Shiny app includes a data exploration tab and 5 modeling tabs with test error accuracy. The five models included are a Logistical, Naive Bayes, QDA, LDA and parttree models. 
 
-  - Insulin: To express the Insulin level in blood
 
-  - BMI: To express the Body mass index
+
   
-  - DiabetesPedigreeFunction: To express the Diabetes percentage
-
-  - Age: To express the age
-
-  - Outcome: To express the final result 1 is Yes and 0 is No
-  
-  
-  Ideas - 
-    data visuals tab
-      one tab for plotting 2 against each other with coloring by outcome - Scatterplot matrix
-  
-  
-  
-  Removed all non-0 data points except pregnancies - models got better - nulls were input as 0 so they should be removed before any visuals or data modeling
-    
-  Maybe need more visuals...
-    
-    
-TODO - BLOG POST!
-    
-    
 ## Contents
-- `final_report.qmd` - Brief Write up of Project
+- `final_report.qmd/final_report.html` - Project Report
 - `final_project.qmd` - Shiny App
 - `final_pres.qmd` - Brief Class Presentation
+- [Blog Post](https://jaxlub.github.io/Data-Visualization-Blog/posts/final_proj/) - Blog post highlighting a few features of the app

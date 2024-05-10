@@ -8,7 +8,7 @@
 
 <meta name="author" content="Jax Lubkowitz">
 
-<title>final_report</title>
+<title>Final Report</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,151 +107,193 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Final Report</h1>
+</div>
 
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jax Lubkowitz </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
 
 <section id="abstract" class="level1">
 <h1>Abstract</h1>
+<p>In this report we will explore the relationship between biological measurements and diabetes to build a model to predict diabetes outcome. We strive to identify which predictors are the most relevant when predicting diabetes and analyze multiple models to capture the best relationship between predictors and response. This has major applications for pre-identification and preventative treatments. To explore this we used a data set of 768 individuals with various variables such as age or blood pressure. In addition we explored five modeling techniques (Logistic, Naive Bayes, QDA, LDA, Tree) to perform this classification task best. Not only did we identify the optimal parameters and model type but we present an interactive app that allows users to explore the data and experiment with how different models and parameters influence model accuracy. We hope that identification of people at high risk for diabetes can lead to preventative care.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Understanding the factors that play a major role in human health is extremely beneficial for both identification and preventative measures for diseases. One such disease, diabetes, impacts many people around the US and world. Typically associated with insulin resistance, diabetes can have major implications on health; in some cases even resulting in amputation of limbs or death. Diabetes is classified as 2 main forms, Type I and Type II diabetes. Type I diabetes is often genetic and arises earlier in life. Type II diabetes is majorly influenced by lifestyle choices such as poor diet, increased weight, or low exercise. If models could be built to predict those at risk for Type II diabetes this could have serious implications for preventative measures. This requires both an understanding of the best predictors for diabetes and which techniques best model the relationship between various predictors and diabetes outcome.</p>
+<section id="questions-of-interest" class="level2">
+<h2 class="anchored" data-anchor-id="questions-of-interest">Questions of Interest</h2>
 <ul>
-<li>what is diabetes?</li>
-<li>what is dataset?</li>
-<li>what is goal?</li>
-<li>what are we showing?</li>
+<li>What techniques best model the relationship between various predictors and diabetes outcome?</li>
+<li>What characteristics can be used to predict diabetes outcome?</li>
 </ul>
-<section id="background-relavance" class="level2">
-<h2 class="anchored" data-anchor-id="background-relavance">Background &amp; Relavance</h2>
-<p>Find sources?</p>
-<p>Questions of Interest - - What techniques best model the relationship between various predictors and diabetes outcome? - What characteristics can be used to predict diabetes outcome?</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>The data for this exploration was found on <a href="https://www.kaggle.com/datasets/akshaydattatraykhare/diabetes-dataset?resource=download">kaggle</a>. The data consists of 768 cases with 8 parameters and if they developed diabetes Data columns can be seen below.</p>
+<ul>
+<li><p>Pregnancies: To express the Number of pregnancies</p></li>
+<li><p>Glucose: Blood glucose level</p></li>
+<li><p>BloodPressure: Blood pressure measurement</p></li>
+<li><p>SkinThickness: Thickness of skin</p></li>
+<li><p>Insulin: Insulin level in blood</p></li>
+<li><p>BMI: Body mass index measurment</p></li>
+<li><p>DiabetesPedigreeFunction: Diabetes percentage using genetic factors</p></li>
+<li><p>Age: Age in years</p></li>
+<li><p>Outcome: Diabetes outcome - 1 is Yes and 0 is No</p></li>
+</ul>
 </section>
 <section id="tidying" class="level2">
 <h2 class="anchored" data-anchor-id="tidying">Tidying</h2>
-<p>The data set had a large amount of 0 values for things such as skin thickness. Upon further investigation it appeared that null values in the data set had been filled in with 0’s. When modeling this could cause serious skews in our results. To prevent this I removed all 0 values in categories where they had been applied as null (ie 0 pregnancies makes sense but having 0 BMI is just a null value). The one problem with this tack is it limits the amount of data available. Initially the data set had 768 instances but after filtering all null Glucose, Blood Pressure, Skin Thickness, Insulin and BMI values the data set was left with 392 instances.</p>
+<p>The data set had a large amount of <code>0</code> values for variables such as skin thickness. Upon further investigation it appeared that null values in the data set had been filled in with 0’s. When modeling, this could cause serious skews in our results. To prevent this I removed all 0 values in categories where they had been applied as null (i.e., 0 pregnancies makes sense but having 0 BMI is a null value). The one problem with this tack is it limits the amount of data available. Initially the data set had 768 instances but after filtering all null Glucose, Blood Pressure, Skin Thickness, Insulin and BMI values the data set was left with 392 instances.</p>
 </section>
 <section id="model-backgrounds" class="level2">
 <h2 class="anchored" data-anchor-id="model-backgrounds">Model backgrounds</h2>
-<p>LOG - QDA - LDA - Naive Bayes - Tree</p>
+<p>We implemented 5 modeling techniques in our shiny app to allow users different exploratory techniques. We have highlighted the basic outline of each model below. For each model (except parttree) the test rate error is computed in addition to model statistics output in the app. The parttree is displayed in a graphic visual with a predictor on each axis.</p>
+<ul>
+<li>Logistic model - Basic generalized linear model</li>
+<li>Naive Bayes model - Model uses Bayes theorem to predict diabetes outcome</li>
+<li>QDA - Quadratic discriminant analysis model</li>
+<li>LDA - Linear Discriminant analysis model</li>
+<li>Parttree- decision tree with 2 numeric predictors</li>
+</ul>
 </section>
 </section>
-<section id="data-exploration" class="level1">
-<h1>Data Exploration</h1>
-<section id="histograms" class="level2">
-<h2 class="anchored" data-anchor-id="histograms">Histograms</h2>
-<p>Glucose and Insulin r instresting show visuals</p>
+<section id="data-visualizations" class="level1">
+<h1>Data Visualizations</h1>
+<p>The first tab in the shiny app allows the user to select a predictor and compare the distribution of diabetic and non-diabetic groups. Differences in the two distributions could indicate a strong predictor to be implemented in the other tabs. An example output of Insulin levels between the two groups is displayed below. Notice the higher insulin levels in the diabetic group (red) which could indicate insulin is a useful predictor (which it was in some models).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'ggplot2' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.2     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.5.0     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'gridExtra'
 
-The following object is masked from 'package:dplyr':
-
-    combine</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.1.1 ──
-✔ broom        1.0.5      ✔ rsample      1.2.0 
-✔ dials        1.2.1      ✔ tune         1.1.2 
-✔ infer        1.0.6      ✔ workflows    1.1.4 
-✔ modeldata    1.3.0      ✔ workflowsets 1.0.1 
-✔ parsnip      1.2.0      ✔ yardstick    1.3.0 
-✔ recipes      1.0.10     </code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'dials' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'infer' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'parsnip' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'recipes' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: package 'workflows' was built under R version 4.3.2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
-✖ gridExtra::combine() masks dplyr::combine()
-✖ scales::discard()    masks purrr::discard()
-✖ dplyr::filter()      masks stats::filter()
-✖ recipes::fixed()     masks stringr::fixed()
-✖ dplyr::lag()         masks stats::lag()
-✖ yardstick::spec()    masks readr::spec()
-✖ recipes::step()      masks stats::step()
-• Dig deeper into tidy modeling with R at https://www.tmwr.org</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"grantmcdermott/parttree"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Skipping install of 'parttree' from a github remote, the SHA1 (d2b60ac0) has not changed since last install.
-  Use `force = TRUE` to force installation</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parttree)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(splitTools) <span class="co"># create_folds</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'/Users/jaxlub/Downloads/diabetes.csv'</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Glucose <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(BloodPressure <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SkinThickness <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Insulin <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(BMI <span class="sc">!=</span> <span class="dv">0</span>)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>data_pos <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span>(Outcome <span class="sc">==</span> <span class="dv">1</span>) </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>data_neg <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> <span class="fu">filter</span>(Outcome <span class="sc">==</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data_neg, <span class="fu">aes</span>(<span class="at">x =</span> Insulin)) <span class="sc">+</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"cornflowerblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Insulin Distribution in Non-Diabetic Patients"</span>) <span class="sc">+</span> </span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data_pos, <span class="fu">aes</span>(<span class="at">x =</span> Insulin)) <span class="sc">+</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"firebrick1"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Insulin Distribution in Diabetic Patients"</span>) <span class="sc">+</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-</div>
-<div class="cell quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data_neg, <span class="fu">aes</span>(<span class="at">x =</span> Insulin)) <span class="sc">+</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"cornflowerblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Insulin Distribution in Non-Diabetic Patients"</span>) <span class="sc">+</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
 <p><img src="final_report_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data_pos, <span class="fu">aes</span>(<span class="at">x =</span> Insulin)) <span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"firebrick1"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Insulin Distribution in Diabetic Patients"</span>) <span class="sc">+</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
 <p><img src="final_report_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Scatter plots can also give helpful insights into the relationship between predictors and their relationship with the response variable, diabetes. In the scatter plot below points are plotted using Age and Glucose. The points are colored by diabetic outcome and appear to have a general trend; many of the points with higher glucose and age over 30 have diabetes. It appears that those without diabetes are generally younger and have lower blood glucose. This is not a perfect relationship but indicates age and glucose could be effective predictors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> data, <span class="fu">aes</span>(<span class="at">x =</span> Age, <span class="at">y =</span> Glucose, <span class="at">color =</span> Outcome)) <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Relationship between Age and Blood Glucose"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Diabetic outcomes in blue &amp; non-diabetic outcomes in pink"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="final_report_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The shiny app lets the user experiment with various models. An example of the logistic glm model can be seen with all predictors in the data set used. This displays various metrics but for the “average everyday user” with no stats background the most important things to note is the Train Error rate (lower is better) and the stars in the model output (far right) with more stars indicating stronger predictors. This is similar output to the tabs containing the Naive Bayes, QDA and LDA models.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>    full.log <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summary</span>(full.log)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = Outcome ~ ., family = binomial, data = data)
+
+Coefficients:
+                           Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)              -1.004e+01  1.218e+00  -8.246  &lt; 2e-16 ***
+Pregnancies               8.216e-02  5.543e-02   1.482  0.13825    
+Glucose                   3.827e-02  5.768e-03   6.635 3.24e-11 ***
+BloodPressure            -1.420e-03  1.183e-02  -0.120  0.90446    
+SkinThickness             1.122e-02  1.708e-02   0.657  0.51128    
+Insulin                  -8.253e-04  1.306e-03  -0.632  0.52757    
+BMI                       7.054e-02  2.734e-02   2.580  0.00989 ** 
+DiabetesPedigreeFunction  1.141e+00  4.274e-01   2.669  0.00760 ** 
+Age                       3.395e-02  1.838e-02   1.847  0.06474 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 498.10  on 391  degrees of freedom
+Residual deviance: 344.02  on 383  degrees of freedom
+AIC: 362.02
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    folds <span class="ot">&lt;-</span> <span class="fu">create_folds</span>(data<span class="sc">$</span>Outcome, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    error <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">5</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (train <span class="cf">in</span> folds) {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      model <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome <span class="sc">~</span> ., <span class="at">data =</span> data[train,], <span class="at">family =</span> binomial)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      probabilities <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> data[<span class="sc">-</span>train,], <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      predictions <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(probabilities <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="st">"1"</span>, <span class="st">"0"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      error[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(predictions <span class="sc">!=</span> data[<span class="sc">-</span>train,]<span class="sc">$</span>Outcome)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    text <span class="ot">&lt;-</span> <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Train Error Rate: "</span>, <span class="fu">round</span>(<span class="fu">mean</span>(error), <span class="at">digits =</span> <span class="dv">5</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Train Error Rate: 0.21955"</code></pre>
+</div>
+</div>
+<p>The Parttree tab in the shiny app lets the user look at how a decision tree classifies two predictors. This plot overlays the true data points with the visual to highlight how the data influences the model’s area distribution. Below is a static output using BMI and Age as predictors. Areas and points in blue represent diabetic outcome while red is non-diabetic outcomes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Outcome <span class="ot">=</span> <span class="fu">as.factor</span>(data<span class="sc">$</span>Outcome)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Build our tree using parsnip (but with rpart as the model engine)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>tree <span class="ot">=</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">decision_tree</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(Outcome <span class="sc">~</span> BMI <span class="sc">+</span> Age, <span class="at">data =</span> data)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Plot the data and model partitions</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BMI, <span class="at">y =</span> Age)) <span class="sc">+</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">colour =</span> Outcome), <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_parttree</span>(<span class="at">data =</span> tree, <span class="fu">aes</span>(<span class="at">fill =</span> Outcome), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"BMI"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Age"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Classification Areas of Diabetes"</span>) <span class="sc">+</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">24</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="final_report_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
-<section id="scatter-plots" class="level2">
-<h2 class="anchored" data-anchor-id="scatter-plots">Scatter plots</h2>
+<section id="shiny-app-findings" class="level1">
+<h1>Shiny App Findings</h1>
+<p>The shiny app has 5 modeling methods and allows the user to play around with the relationship between various predictors and diabetic outcome. I used the app to identify combinations and applied them across the models to find the optimal model for predicting diabetes. I did not use the Parttree model in this because while it is an effective visual I did not calculate a test error. Between the other 4 models all had very similar baselines around 22% test error with the logistic model having the lowest (21.438%) and QDA the highest (23.248%). I then changed the models to have the lowest test training error. Not all models had the same predictor to minimize the error. The best model configuration are listed below with their test error rate.</p>
+<ul>
+<li>Logistic Model - Glucose, Insulin, BMI, Diabetes Pedigree Function, Age - 20.443%</li>
+<li>Naive Bayes - Glucose, Diabetes Pedigree Function, Age - 20.647%</li>
+<li>LDA - Glucose, Skin Thickness, Insulin, BMI, Diabetes Pedigree Function, Age - 20.677%</li>
+<li>QDA - Pregnancies, Glucose, Skin Thickness, Insulin, BMI, Age - 21.18%</li>
+</ul>
+<p>Glucose and age are used in all optimal model configurations as predictors. On top of this the top 3 models also all share the diabetes pedigree function. This indicates that age, blood glucose levels and genetic factors are three big predictors in diabetes outcome (of the predictors in our data set). Furthermore we can see that the logistic model has the lowest error rate. With that in mind, all 4 models are extremely close and test error can fluctuate due to the random sampling of test vs train data. There is some indication that the logistic model is the strongest but cannot be said definitively that it is better then the others.</p>
 </section>
-<section id="discuss-shiny-app" class="level2">
-<h2 class="anchored" data-anchor-id="discuss-shiny-app">Discuss Shiny App</h2>
-</section>
-</section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
+<section id="future-work" class="level1">
+<h1>Future Work</h1>
+<p>As is generally the case, I wish I had more data to work with both in terms of total cases but also measured values such as resting heart rate or weekly exercise. Furthermore I am curious to see how many of the diabetic cases are type I vs type II diabetes. This could play a major role in our modeling as type I diabetes is genetic thus influencing the importance of the diabetes pedigree function. With an increase in data we could also expand to more concrete conclusions and see if the trends we noticed with glucose and age remain true. On top of this, with more data, shallow machine learning models can be implemented and tested. The goal of this project was to implement modeling techniques to identify predictors for diabetes. This has major implications on identifying those at risk and intervening before it arises. This same idea can be applied to virtually all chronic diseases including cancer. Early identification could have massive health benefits. Moving forward I would love to find data sets regarding other diseases and see if strong models could be built for them as well. Upon identification of strong predictors and building of models I think an app where a user enters their measured values (such as BMI, Blood Glucose, Age, Weight) and the model then analyzes which diseases one is ar risk for could have major benefits. This could also incorporate sources to various health platforms with preventative plans such as diet changes. If implemented properly this could alert people of there increased risk and mitigate it before it is too late.</p>
 </section>
 
 </main>
