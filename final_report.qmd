@@ -1,5 +1,5 @@
 ---
-title: "Final Report"
+title: "Predicting Diabetes with Various Modeling Techniques"
 author: "Jax Lubkowitz"
 format: html
 editor: visual
